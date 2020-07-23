@@ -1,0 +1,998 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Python Fluente - Capítulo 2\n",
+    "Data: 22/07/2020  \n",
+    "Páginas: 59 a 69  \n",
+    "Livro/Edição: Python Fluent, Ed.1  \n",
+    "Título: Uma coleção de sequências (An Array of Sequences)  \n",
+    "Objetivos: Entender melhor sobre fatiamento, atribuição e ordenação.  \n",
+    "Python: 3.8.2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Agenda\n",
+    "- Recap (+- 5 min) \n",
+    "- Overview em conjunto do que foi lido / highlights (+- 30 min)\n",
+    "- Começarmos discutindo nossas dúvidas (+- 30 min)\n",
+    "- Discussão sobre novas fontes / exercícios curtos (1 ou 2 no max) ( +- 30 min)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Recap dos encontros passados\n",
+    "- Prefácio\n",
+    "- Part I, Prólogo - Capítulo 1, Modelo de dados do Python\n",
+    "- Part II, Estrutura de dados - Capítulo 2, Uma coleção de sequências - Tuplas: listas imutáveis"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from IPython.core.interactiveshell import InteractiveShell\n",
+    "InteractiveShell.ast_node_interactivity = \"all\""
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Part II, Estrutura de dados - Capítulo 2, Uma coleção de sequências - Fatiamento\n",
+    "#### Referências\n",
+    "- Tipos de sequência: https://docs.python.org/3.8/library/stdtypes.html\n",
+    "- Notação do slice: https://docs.python.org/3/c-api/slice.html\n",
+    "- Dados do covid: https://covid.saude.gov.br/\n",
+    "- Ellipsis: https://stackoverflow.com/questions/772124/what-does-the-ellipsis-object-do\n",
+    "- Objetos iteráveis: https://docs.python.org/3/glossary.html\n",
+    "- Fluent interface: https://en.wikipedia.org/wiki/Fluent_interface\n",
+    "- Timsort: \n",
+    "  - https://www.geeksforgeeks.org/timsort/\n",
+    "  - https://hackernoon.com/timsort-the-fastest-sorting-algorithm-youve-never-heard-of-36b28417f399\n",
+    "  - https://stackoverflow.com/questions/7770230/comparison-between-timsort-and-quicksort\n",
+    "- Algoritmos de ordenação: https://realpython.com/sorting-algorithms-python/"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Resumo\n",
+    "- Todos os tipos de sequências permitem fatiamento, e.g.:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 188,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[1]"
+      ]
+     },
+     "execution_count": 188,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "(1,)"
+      ]
+     },
+     "execution_count": 188,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "range(0, 1)"
+      ]
+     },
+     "execution_count": 188,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "'a'"
+      ]
+     },
+     "execution_count": 188,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "b'abc'"
+      ]
+     },
+     "execution_count": 188,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "bytearray(b'abc')"
+      ]
+     },
+     "execution_count": 188,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "bytearray(b'a')"
+      ]
+     },
+     "execution_count": 188,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# sequencias: conjunto ordenado\n",
+    "# 6 tipos: list, tuple, range, str, bytes, bytearray\n",
+    "# list\n",
+    "[1, 2, 3][:1]\n",
+    "# tuple\n",
+    "(1, 2, 3)[:1]\n",
+    "# range\n",
+    "range(5)[:1]\n",
+    "# str\n",
+    "'abc'[:1]\n",
+    "# bytes\n",
+    "b'abc'\n",
+    "# bytearray\n",
+    "bytearray('abc', encoding='utf-8')[:1]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "- Exclusão do útlimo item"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "slice_idx = 2\n",
+    "example_list = [1, 2, 3, 4, 5]\n",
+    "example_list[:slice_idx], example_list[slice_idx:]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "- Objeto fatiador"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# seq[start:stop:step]\n",
+    "numbers, suits = range(1, 14), ['espadas', 'paus', 'copas', 'ouros']\n",
+    "deck = [f'{number}-{suit}' for number in numbers for suit in suits]\n",
+    "deck[:4] # todos os às \n",
+    "deck[::4] # todos os espadas\n",
+    "deck[4:12:] # todas os 2 e 3\n",
+    "\n",
+    "# slice(stop) or slice(start, stop[, step])\n",
+    "type(slice(1))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "- Nomeando fatiadores"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "covid_data = \"\"\"\n",
+    "0............13.......22..........33..............49...........62................80.........91\n",
+    "regiao        estado   data        casosAcumulado  casosNovos   obitosAcumulado   obitosNovos\n",
+    "Centro-Oeste  MS       7/21/2020   17386           749          248               20\n",
+    "Centro-Oeste  MT       7/21/2020   37077           1438         1400              16\n",
+    "Centro-Oeste  GO       7/21/2020   43794           3022         1154              48\n",
+    "Centro-Oeste  DF       7/21/2020   86076           1789         1158              46\n",
+    "\"\"\""
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# limpando as linhas em branco\n",
+    "data = covid_data.split('\\n')[3:-1]\n",
+    "\n",
+    "# criando os fatiadores\n",
+    "ESTADO = slice(13, 22)\n",
+    "CASOS_TOTAL = slice(33, 49)\n",
+    "\n",
+    "for linha in data:\n",
+    "    print(linha[ESTADO], linha[CASOS_TOTAL])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "- Fatiadores multidimensionais e reticências\n",
+    "\n",
+    "Os tipos de sequência básicos do Python só aceitam um índice ou fatiador, e.g.:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 191,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "<>:1: SyntaxWarning: list indices must be integers or slices, not tuple; perhaps you missed a comma?\n",
+      "<>:1: SyntaxWarning: list indices must be integers or slices, not tuple; perhaps you missed a comma?\n",
+      "<ipython-input-191-fae8eca1a9fb>:1: SyntaxWarning: list indices must be integers or slices, not tuple; perhaps you missed a comma?\n",
+      "  [1, 2, 3][0, 1]\n"
+     ]
+    },
+    {
+     "ename": "TypeError",
+     "evalue": "list indices must be integers or slices, not tuple",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[0;31m-------------------------------------------------------------------------\u001b[0m",
+      "\u001b[0;31mTypeError\u001b[0m                               Traceback (most recent call last)",
+      "\u001b[0;32m<ipython-input-191-fae8eca1a9fb>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m\u001b[0m\n\u001b[0;32m----> 1\u001b[0;31m \u001b[0;34m[\u001b[0m\u001b[0;36m1\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;36m2\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;36m3\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;36m0\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;36m1\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m",
+      "\u001b[0;31mTypeError\u001b[0m: list indices must be integers or slices, not tuple"
+     ]
+    }
+   ],
+   "source": [
+    "[1, 2, 3][0, 1]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 192,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "<>:1: SyntaxWarning: list indices must be integers or slices, not tuple; perhaps you missed a comma?\n",
+      "<>:1: SyntaxWarning: list indices must be integers or slices, not tuple; perhaps you missed a comma?\n",
+      "<ipython-input-192-8d178807da2a>:1: SyntaxWarning: list indices must be integers or slices, not tuple; perhaps you missed a comma?\n",
+      "  [[1, 2, 3], ['a', 'b', 'c']][0, 1]\n"
+     ]
+    },
+    {
+     "ename": "TypeError",
+     "evalue": "list indices must be integers or slices, not tuple",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[0;31m-------------------------------------------------------------------------\u001b[0m",
+      "\u001b[0;31mTypeError\u001b[0m                               Traceback (most recent call last)",
+      "\u001b[0;32m<ipython-input-192-8d178807da2a>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m\u001b[0m\n\u001b[0;32m----> 1\u001b[0;31m \u001b[0;34m[\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;36m1\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;36m2\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;36m3\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;34m[\u001b[0m\u001b[0;34m'a'\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;34m'b'\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;34m'c'\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;36m0\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;36m1\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m",
+      "\u001b[0;31mTypeError\u001b[0m: list indices must be integers or slices, not tuple"
+     ]
+    }
+   ],
+   "source": [
+    "[[1, 2, 3], ['a', 'b', 'c']][0, 1]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 193,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([['1', '2', '3'],\n",
+       "       ['a', 'b', 'c']], dtype='<U21')"
+      ]
+     },
+     "execution_count": 193,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "('a', '2')"
+      ]
+     },
+     "execution_count": 193,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import numpy as np\n",
+    "mtx = np.array([[1, 2, 3], ['a', 'b', 'c']])\n",
+    "mtx\n",
+    "mtx[1, 0], mtx[0, 1]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 211,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "ellipsis"
+      ]
+     },
+     "execution_count": 211,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "ellipsis"
+      ]
+     },
+     "execution_count": 211,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "True"
+      ]
+     },
+     "execution_count": 211,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "array(['a', 'b', 'c'], dtype='<U21')"
+      ]
+     },
+     "execution_count": 211,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "type(...)\n",
+    "type(Ellipsis)\n",
+    "type(...) == type(Ellipsis)\n",
+    "# type(...) == ellipsis  # type('batata') == str\n",
+    "# type(...) == Ellipsis, eh falso, pq?? pq ->> type('batata') == 'batata'\n",
+    "mtx[1, ...]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 213,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "<>:1: SyntaxWarning: list indices must be integers or slices, not tuple; perhaps you missed a comma?\n",
+      "<>:1: SyntaxWarning: list indices must be integers or slices, not tuple; perhaps you missed a comma?\n",
+      "<ipython-input-213-923d0f85edc1>:1: SyntaxWarning: list indices must be integers or slices, not tuple; perhaps you missed a comma?\n",
+      "  [[1, 2, 3], ['a', 'b', 'c']][1, ...]\n"
+     ]
+    },
+    {
+     "ename": "TypeError",
+     "evalue": "list indices must be integers or slices, not tuple",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[0;31m-------------------------------------------------------------------------\u001b[0m",
+      "\u001b[0;31mTypeError\u001b[0m                               Traceback (most recent call last)",
+      "\u001b[0;32m<ipython-input-213-923d0f85edc1>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m\u001b[0m\n\u001b[0;32m----> 1\u001b[0;31m \u001b[0;34m[\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;36m1\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;36m2\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;36m3\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;34m[\u001b[0m\u001b[0;34m'a'\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;34m'b'\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;34m'c'\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;36m1\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;34m...\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m",
+      "\u001b[0;31mTypeError\u001b[0m: list indices must be integers or slices, not tuple"
+     ]
+    }
+   ],
+   "source": [
+    "[[1, 2, 3], ['a', 'b', 'c']][1, ...]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "- Atribuindo com fatiadores"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 218,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[0, 1, 42, 24, 8, 9]"
+      ]
+     },
+     "execution_count": 218,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "example = list(range(10))  # lado direito somente objetos iteráveis sendo sequências mutáveis\n",
+    "example[2:8] = [42, 24]\n",
+    "example\n",
+    "\n",
+    "# objetos iteráveis:\n",
+    "# all sequence types (such as list, str, and tuple) and some non-sequence\n",
+    "# types like dict, file objects, and objects of any classes you define with\n",
+    "# an __iter__() method or with a __getitem__() method that implements\n",
+    "# Sequence semantics.\n",
+    "\n",
+    "# lista mutavel\n",
+    "t = [1, 2]\n",
+    "t[0] = 1 \n",
+    "# tupla imutavel\n",
+    "t = (1, 2)\n",
+    "t[0] = 1 \n",
+    "# str imutavel\n",
+    "# range imutavel\n",
+    "# bytes imutavel\n",
+    "# bytearray mutavel\n",
+    "# array.array mutavel"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "- Operadores + e * com sequências"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 219,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[1, 2, 3, 4, 5, 6]"
+      ]
+     },
+     "execution_count": 219,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "[1, 2, 3, 1, 2, 3]"
+      ]
+     },
+     "execution_count": 219,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "[[], [], []]"
+      ]
+     },
+     "execution_count": 219,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "[1, 2, 3] + [4, 5, 6]\n",
+    "[1, 2, 3] * 2\n",
+    "[[]] * 3  # pq isso acontece?"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "- Construindo listas de listas"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 220,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[['_', '_', '_'], ['_', '_', '_'], ['_', '_', '_']]"
+      ]
+     },
+     "execution_count": 220,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "[['_', '_', 'O'], ['_', '_', 'O'], ['_', '_', 'O']]"
+      ]
+     },
+     "execution_count": 220,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "[['_', '_', '_'], ['_', '_', '_'], ['_', '_', '_']]"
+      ]
+     },
+     "execution_count": 220,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "[['_', '_', '_'], ['_', '_', 'O'], ['_', '_', '_']]"
+      ]
+     },
+     "execution_count": 220,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# jeito errado\n",
+    "ttt = [['_'] * 3] * 3\n",
+    "ttt\n",
+    "ttt[1][2] = 'O'\n",
+    "ttt\n",
+    "\n",
+    "# jeito correto !!!!!!!!!!\n",
+    "ttt = [['_'] * 3 for _ in range(3)] # list comprehensions\n",
+    "ttt\n",
+    "ttt[1][2] = 'O'\n",
+    "ttt"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "- Atribuição combinada com sequências\n",
+    "Os operadores += e *= utilizam os métodos especiais __iadd__ e __imul__ respectivamente."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 223,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "140517172763392"
+      ]
+     },
+     "execution_count": 223,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "140517172470528"
+      ]
+     },
+     "execution_count": 223,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "a, b = [1], [2]\n",
+    "id(a)\n",
+    "a = a + b\n",
+    "id(a)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 224,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "140517172473536"
+      ]
+     },
+     "execution_count": 224,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "140517172473536"
+      ]
+     },
+     "execution_count": 224,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "a, b = [1], [2]\n",
+    "id(a)\n",
+    "a += b\n",
+    "id(a)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 225,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "140517903675120"
+      ]
+     },
+     "execution_count": 225,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "140517775463920"
+      ]
+     },
+     "execution_count": 225,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "'ab'"
+      ]
+     },
+     "execution_count": 225,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# __add__ em vz do __iadd__\n",
+    "a, b = 'a', 'b'\n",
+    "id(a)\n",
+    "a += b\n",
+    "id(a)\n",
+    "a"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 226,
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "TypeError",
+     "evalue": "'tuple' object does not support item assignment",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[0;31m-------------------------------------------------------------------------\u001b[0m",
+      "\u001b[0;31mTypeError\u001b[0m                               Traceback (most recent call last)",
+      "\u001b[0;32m<ipython-input-226-705105e92997>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m\u001b[0m\n\u001b[1;32m      1\u001b[0m \u001b[0mweird_case\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0;34m(\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;36m1\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;36m2\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;36m3\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m----> 2\u001b[0;31m \u001b[0mweird_case\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;36m0\u001b[0m\u001b[0;34m]\u001b[0m \u001b[0;34m+=\u001b[0m \u001b[0;34m[\u001b[0m\u001b[0;36m10\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m",
+      "\u001b[0;31mTypeError\u001b[0m: 'tuple' object does not support item assignment"
+     ]
+    }
+   ],
+   "source": [
+    "weird_case = ([1, 2, 3], )\n",
+    "weird_case[0] += [10]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 227,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "([1, 2, 3, 10],)"
+      ]
+     },
+     "execution_count": 227,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "  1           0 LOAD_NAME                0 (weird_case)\n",
+      "              2 LOAD_CONST               0 (0)\n",
+      "              4 DUP_TOP_TWO\n",
+      "              6 BINARY_SUBSCR\n",
+      "              8 LOAD_CONST               1 (10)\n",
+      "             10 BUILD_LIST               1\n",
+      "             12 INPLACE_ADD\n",
+      "             14 ROT_THREE\n",
+      "             16 STORE_SUBSCR\n",
+      "             18 LOAD_CONST               2 (None)\n",
+      "             20 RETURN_VALUE\n"
+     ]
+    }
+   ],
+   "source": [
+    "weird_case\n",
+    "import dis\n",
+    "dis.dis(\"weird_case[0] += [10]\")  # bytecode da expressao\n",
+    "# objetos mutaveis dentro de tuplas pode nao ser uma boa ideia ! "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "- list.sort e sorted"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 242,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "None\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "[1, 2, 3]"
+      ]
+     },
+     "execution_count": 242,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "30\n",
+      "20\n",
+      "10\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "''"
+      ]
+     },
+     "execution_count": 242,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "10\n",
+      "20\n",
+      "30\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "['aa', 'aaa', 'b', 'bb']"
+      ]
+     },
+     "execution_count": 242,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "['bb', 'b', 'aaa', 'aa']"
+      ]
+     },
+     "execution_count": 242,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "list"
+      ]
+     },
+     "execution_count": 242,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "['aaa', 'aa', 'bb', 'b']"
+      ]
+     },
+     "execution_count": 242,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "'   '"
+      ]
+     },
+     "execution_count": 242,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "list"
+      ]
+     },
+     "execution_count": 242,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "{'a': 2, 'b': 1}"
+      ]
+     },
+     "execution_count": 242,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "{'b': 1, 'a': 2}"
+      ]
+     },
+     "execution_count": 242,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# métodos e funções que alteram o objeto que o chamou, retornam None por convenção\n",
+    "ex = [3, 1, 2]\n",
+    "print(ex.sort())\n",
+    "ex\n",
+    "\n",
+    "# sorted aceita qualquer objeto iterável\n",
+    "# inclusive sequências imutáveis e geradores\n",
+    "ex = (x for x in [30, 20, 10])\n",
+    "for i in ex:\n",
+    "    print(i)\n",
+    "''\n",
+    "ex = sorted((x for x in [30, 20, 10]))\n",
+    "for i in ex:\n",
+    "    print(i)\n",
+    "\n",
+    "# inverter e critério de ordenação\n",
+    "sorted(['aaa', 'aa', 'bb', 'b'])\n",
+    "sorted(['aaa', 'aa', 'bb', 'b'], reverse=True)\n",
+    "f = sorted(['aaa', 'aa', 'bb', 'b'], key=len)\n",
+    "type(f)\n",
+    "sorted(['aaa', 'aa', 'bb', 'b'], key=len, reverse=True)\n",
+    "\n",
+    "'   '\n",
+    "d = sorted({'b': 1, 'a': 2})\n",
+    "type(d)\n",
+    "\n",
+    "d = sorted({'b': 1, 'a': 2}.items(), key=lambda x: x[0])  # ordena por chave\n",
+    "new_d = dict(d)\n",
+    "new_d\n",
+    "\n",
+    "d = sorted({'b': 1, 'a': 2}.items(), key=lambda x: x[1])  # ordena por valor\n",
+    "new_d = dict(d)\n",
+    "new_d"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "- Extra: TimSort\n",
+    "  - Tem complexidade de tempo de O(n Log n)\n",
+    "  - Em Java é utilizado no Arrays.sort() e no Python em list.sort() e sorted()\n",
+    " \n",
+    "![img](https://hackernoon.com/hn-images/1*1CkG3c4mZGswDShAV9eHbQ.png)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Dúvidas?"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3.8.2 64-bit ('venv': venv)",
+   "language": "python",
+   "name": "python38264bitvenvvenv6522bc035b374662aee7f4baccade64d"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.2"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
