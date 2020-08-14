@@ -4,6 +4,14 @@
 Esse repositório reúne as anotações e códigos do grupo de estudo do livro
 [Python Fluente do Luciano Ramalho](https://novatec.com.br/livros/pythonfluente/)
 
+## Sumário
+
+1. [Modelo de dados do Python](https://github.com/pyladiesdf/python-fluent/tree/master/cap1)
+1. [Uma coleção de sequências](https://github.com/pyladiesdf/python-fluent/tree/master/cap2)
+1. [Dicionários e conjuntos](https://github.com/pyladiesdf/python-fluent/tree/master/cap3)
+
+
+
 ## Organização
 O repositório está organizado em pastas referentes aos capítulos do livro.
 Cada arquivo dentro dele (aproximadamente) corresponde a um encontro do grupo de estudos.
